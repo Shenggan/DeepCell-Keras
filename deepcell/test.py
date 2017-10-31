@@ -29,7 +29,7 @@ from utils.indice import dice_jaccard_indices
 
 from utils.model import dilated_bn_feature_net_61x61 as network
 
-from tensorflow.contrib.keras import backend as K
+from keras import backend as K
 K.manual_variable_initialization(False)
 
 def main():

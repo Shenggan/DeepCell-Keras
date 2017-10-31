@@ -23,8 +23,8 @@ from skimage.io import imread
 from scipy import ndimage
 
 import tensorflow as tf
-from tensorflow.contrib.keras import backend as K
-import tensorflow.contrib.keras.api.keras.activations as activations
+from keras import backend as K
+import keras.activations as activations
 
 def cf(x, y, sample_image):
 

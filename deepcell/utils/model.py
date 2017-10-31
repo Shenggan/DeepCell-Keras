@@ -12,9 +12,9 @@ Assortment of CNN architectures for single cell segmentation
 
 import tensorflow as tf
 from tensorflow.contrib.keras import backend as K
-from tensorflow.contrib.keras.api.keras.models import Sequential, Model
-from tensorflow.contrib.keras.api.keras.layers import Conv2D, MaxPool2D, Activation, Lambda, Flatten, BatchNormalization, Permute, Input, Concatenate
-from tensorflow.contrib.keras.api.keras.regularizers import l2
+from keras.models import Sequential, Model
+from keras.layers import Conv2D, MaxPool2D, Activation, Lambda, Flatten, BatchNormalization, Permute, Input, Concatenate
+from keras.regularizers import l2
 from .cnn import dilated_MaxPool2D, TensorProd2D, axis_softmax
 
 """

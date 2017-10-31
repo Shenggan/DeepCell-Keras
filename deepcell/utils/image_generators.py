@@ -17,8 +17,8 @@ Import python packages
 import os
 import numpy as np
 
-from tensorflow.contrib.keras import backend as K
-from tensorflow.contrib.keras.api.keras.preprocessing.image import apply_transform, flip_axis, array_to_img, img_to_array, load_img, ImageDataGenerator, Iterator, NumpyArrayIterator, DirectoryIterator
+from keras import backend as K
+from keras.preprocessing.image import apply_transform, flip_axis, array_to_img, img_to_array, load_img, ImageDataGenerator, Iterator, NumpyArrayIterator, DirectoryIterator
 
 from .helper import *
 

@@ -12,14 +12,14 @@ import os
 import datetime
 
 import tensorflow as tf
-from tensorflow.contrib.keras import backend as K
-from tensorflow.contrib.keras.api.keras.layers import Layer, InputSpec
-from tensorflow.contrib.keras.api.keras.callbacks import ModelCheckpoint, LearningRateScheduler
-import tensorflow.contrib.keras.api.keras.activations as activations
-import tensorflow.contrib.keras.api.keras.initializers as initializers
-import tensorflow.contrib.keras.api.keras.regularizers as regularizers
-import tensorflow.contrib.keras.api.keras.constraints as constraints
-from tensorflow.contrib.keras.python.keras.utils import conv_utils
+from keras import backend as K
+from keras.layers import Layer, InputSpec
+from keras.callbacks import ModelCheckpoint, LearningRateScheduler
+import keras.activations as activations
+import keras.initializers as initializers
+import keras.regularizers as regularizers
+import keras.constraints as constraints
+from keras.utils import conv_utils
 
 from .helper import *
 from .data import *
@@ -45,7 +45,7 @@ class dilated_MaxPool2D(Layer):
 		self.data_format = conv_utils.normalize_data_format(data_format)
 		self.input_spec = InputSpec(ndim=4)
 
-	def compute_output_shape(self):
+	def compute_output_shape(self, input_shape):
 		if self.data_format == 'channels_first':
 			rows = input_shape[2]
 			cols = input_shape[3]
@@ -53,8 +53,8 @@ class dilated_MaxPool2D(Layer):
 			rows = input_shape[1]
 			cols = input_shape[2]
 
-		rows = conv_utils.conv_output_length(rows, pool_size[0], padding='valid', stride=self.strides[0], dilation=dilation_rate)
-		cols = conv_utils.conv_output_length(cols, pool_size[1], padding='valid', stride=self.strides[1], dilation=dilation_rate)
+		rows = conv_utils.conv_output_length(rows, self.pool_size[0], padding='valid', stride=self.strides[0], dilation=self.dilation_rate)
+		cols = conv_utils.conv_output_length(cols, self.pool_size[1], padding='valid', stride=self.strides[1], dilation=self.dilation_rate)
 
 		if self.data_format == 'channels_first':
 			return (input_shape[0], input_shape[1], rows, cols)
@@ -177,12 +177,12 @@ class TensorProd2D(Layer):
 
 	def compute_output_shape(self, input_shape):
 		rows = input_shape[2]
-		cols = output_shape[3]
+		cols = input_shape[3]
 		if self.data_format == 'channels_first':
-			output_shape = tuple(input_shape[0], self.output_dim, rows, cols)
+			output_shape = (input_shape[0], self.output_dim, rows, cols)
 
 		elif self.data_format == 'channels_last':
-			output_shape = tuple(input_shape[0], rows, cols, self.output_dim)
+			output_shape = (input_shape[0], rows, cols, self.output_dim)
 
 		return output_shape
 
@@ -448,44 +448,3 @@ def run_models_on_directory(data_location, channel_names, output_location, model
 				tiff.imsave(cnnout_name, feature)
 
 	return model_output
-
-def make_parallel(model, gpu_count):
-	def get_slice(data, idx, parts):
-		shape = tf.shape(data)
-		size = tf.concat([shape[:1] // parts, shape[1:]], axis=0)
-		stride = tf.concat([shape[:1] // parts, shape[1:]*0], axis=0)
-		start = stride * idx
-		return tf.slice(data, start, size)
-
-	outputs_all = []
-	for i in range(len(model.outputs)):
-		outputs_all.append([])
-
-	#Place a copy of the model on each GPU, each getting a slice of the batch
-	for i in range(gpu_count):
-		with tf.device('/gpu:%d' % i):
-			with tf.name_scope('tower_%d' % i) as scope:
-
-				inputs = []
-				#Slice each input into a piece for processing on this GPU
-				for x in model.inputs:
-					input_shape = tuple(x.get_shape().as_list())[1:]
-					slice_n = Lambda(get_slice, output_shape=input_shape, arguments={'idx':i, 'parts':gpu_count})(x)
-					inputs.append(slice_n)
-
-				outputs = model(inputs)
-
-				if not isinstance(outputs, list):
-					outputs = [outputs]
-
-				#Save all the outputs for merging back together later
-				for l in range(len(outputs)):
-					outputs_all[l].append(outputs[l])
-
-	# merge outputs on CPU
-	with tf.device('/cpu:0'):
-		merged = []
-		for outputs in outputs_all:
-			merged.append(merge(outputs, mode='concat', concat_axis=0))
-
-	return Model(inputs=model.inputs, outputs=merged)

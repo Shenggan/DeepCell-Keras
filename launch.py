@@ -94,5 +94,5 @@ def main():
 		os.system(command_test)
 
 if __name__ == "__main__":
-	# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+	os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 	main()
