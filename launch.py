@@ -36,6 +36,8 @@ def main():
 						default=2, help="must be same with your dataset")
 	parser.add_argument("--n_features", type=int,
 						default=3, help="must be num_of_features in dataset.py plus 1")
+	parser.add_argument("--dist", type=int,
+						default=0, help="1 to use distrbution training")
 
 	parser.add_argument("--cyto_prefix", type=str,
 					default="2017-10-29_3T3_bn_feature_net_61x61_", help="the prefix of your cyto modle")
@@ -61,6 +63,7 @@ def main():
 	command_train += " --network " + args.network
 	command_train += " --n_model " + str(args.n_model)
 	command_train += " --n_features " + str(args.n_features)
+	command_train += " --dist " + str(args.dist)
 
 	command_train_cyto = command_train + " --n_channels " + str(args.n_channels)
 	command_train_cyto += " -d " + args.dataset
