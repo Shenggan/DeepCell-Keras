@@ -212,7 +212,7 @@ def train_model_sample(model=None, dataset=None, optimizer=None,
 	expt="", it=0, batch_size=32, n_epoch=100,
 	direc_save="/home/vanvalen/ImageAnalysis/DeepCell2/trained_networks/",
 	direc_data="/home/vanvalen/ImageAnalysis/DeepCell2/training_data_npz/",
-	lr_sched=rate_scheduler(lr=0.01, decay=0.95),
+	# lr_sched=rate_scheduler(lr=0.01, decay=0.95),
 	rotation_range=0, flip=True, shear=0, class_weight=None):
 
 	training_data_file_name = os.path.join(direc_data, dataset + ".npz")
@@ -260,7 +260,7 @@ def train_model_sample(model=None, dataset=None, optimizer=None,
 						validation_steps=X_test.shape[0]/batch_size,
 						class_weight=class_weight,
 						callbacks=[ModelCheckpoint(file_name_save, monitor='val_loss', verbose=0,
-							save_best_only=True, mode='auto'), LearningRateScheduler(lr_sched)])
+							save_best_only=True, mode='auto')])
 
 	np.savez(file_name_save_loss, loss_history=loss_history.history)
 
