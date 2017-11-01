@@ -37,8 +37,7 @@ def main():
 						default=2, help="must be same with your dataset")
 	parser.add_argument("-f", "--n_features", type=int,
 						default=3, help="must be num_of_features in dataset.py plus 1")
-	parser.add_argument("--dist", type=int,
-						default=0, help="1 to use distrbution training")
+	parser.add_argument("--dist", type=int, default=0, help="1 to use distrbution training")
 	args = parser.parse_args()
 
 	if args.dist:

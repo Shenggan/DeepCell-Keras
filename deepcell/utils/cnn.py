@@ -245,7 +245,7 @@ def train_model_sample(model=None, dataset=None, optimizer=None,
 	if dist:
 		import horovod.tensorflow as hvd
 		K.get_session().run(hvd.broadcast_global_variables(0))
-		callbacks=[]
+		callbacks = []
 		if hvd.rank() == 0:
 			callbacks.append(ModelCheckpoint(file_name_save, monitor='val_loss', verbose=0,
 								save_best_only=True, mode='auto'))
@@ -268,8 +268,7 @@ def train_model_sample(model=None, dataset=None, optimizer=None,
 						epochs=n_epoch,
 						validation_data=(X_test, Y_test),
 						validation_steps=X_test.shape[0]/batch_size,
-						class_weight=class_weight, callbacks=callbacks
-						)
+						class_weight=class_weight, callbacks=callbacks)
 
 	print("Model saved in : " + file_name_save_loss)
 	if dist and hvd.rank() == 0:
