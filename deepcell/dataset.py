@@ -6,7 +6,7 @@ from __future__ import print_function
 dataset.py
 
 Executing functions for creating npz files containing the training data
-Functions will create training data for Patchwise sampling
+Functions will create training dataset.
 
 Files should be plased in training directories with each separate
 dataset getting its own folder

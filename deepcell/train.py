@@ -27,7 +27,7 @@ def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-d", "--dataset", type=str, default="3T3", help="choose dataset")
 	parser.add_argument("-b", "--batch_size", type=int,
-						default=256, help="batch size")
+						default=64, help="batch size")
 	parser.add_argument("-e", "--n_epoch", type=int, default=1, help="how many epochs in training")
 	parser.add_argument("-n", "--network", type=str,
 						default="bn_feature_net_61x61", help="the network you choose")
