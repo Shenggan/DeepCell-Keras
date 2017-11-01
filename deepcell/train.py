@@ -66,6 +66,8 @@ def main():
 	if args.dist:
 		optimizer = hvd.DistributedOptimizer(optimizer)
 
+	optimizer = tf.train.AdamOptimizer(learning_rate=0.5, beta1=0.9, beta2=0.999, epsilon=0.1, use_locking=False, name='Adam')
+
 	class_weights = {0:1, 1:1, 2:1}
 
 	for iterate in xrange(args.n_model):
