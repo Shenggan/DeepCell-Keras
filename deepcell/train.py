@@ -18,6 +18,7 @@ import argparse
 import tensorflow as tf
 import keras
 from keras import backend as K
+from keras.optimizers import SGD, RMSprop
 
 from utils.cnn import rate_scheduler, train_model_sample as train_model
 from utils.model import bn_feature_net_61x61
@@ -42,7 +43,7 @@ def main():
 
 	if args.dist:
 		print("Using Horovod to Distributed Training!")
-		import horovod.tensorflow as hvd
+		import horovod.keras as hvd
 		hvd.init()
 		config = tf.ConfigProto()
 		config.gpu_options.allow_growth = True
@@ -60,18 +61,20 @@ def main():
 	if 'nuclei' in  args.dataset:
 		direc_save = os.path.join(root, "MODEL/nuclear")
 	direc_data = os.path.join(root, "DATA/train_npz")
-
-	optimizer = tf.train.AdamOptimizer(learning_rate=0.5, beta1=0.9, beta2=0.999, epsilon=0.1, use_locking=False, name='Adam')
+	
 	if args.dist:
+		optimizer = SGD(lr=0.01 * hvd.size(), decay=1e-6, momentum=0.9, nesterov=True)
+		lr_sched = rate_scheduler(lr = 0.01, decay = 0.95)
 		optimizer = hvd.DistributedOptimizer(optimizer)
-
-	optimizer = tf.train.AdamOptimizer(learning_rate=0.5, beta1=0.9, beta2=0.999, epsilon=0.1, use_locking=False, name='Adam')
+	else:
+		optimizer = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+		lr_sched = rate_scheduler(lr = 0.01, decay = 0.95)
 
 	class_weights = {0:1, 1:1, 2:1}
 
 	for iterate in xrange(args.n_model):
 		model = bn_feature_net_61x61(n_channels=args.n_channels, n_features=args.n_features, reg=1e-5)
-		train_model(model=model, dataset=dataset, optimizer=keras.optimizers.TFOptimizer(optimizer),
+		train_model(model=model, dataset=dataset, optimizer=optimizer,
 				expt=expt, it=iterate, batch_size=batch_size, n_epoch=n_epoch,
 				direc_save=direc_save, direc_data=direc_data,
 				class_weight=class_weights,
