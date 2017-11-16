@@ -1,6 +1,6 @@
 # Deep Cell
 
-Reimplement [Deep Cell](https://github.com/CovertLab/DeepCell) with Keras and [Horovod](https://github.com/uber/horovod).
+Reimplement [Deep Cell](https://github.com/CovertLab/DeepCell) with Keras and [Horovod](https://github.com/uber/horovod). The paper of Deep Cell is [here](https://github.com/Shenggan/DeepCell-Keras/raw/master/PAPER/deepcell.pdf).
 
 ## Dataset
 
