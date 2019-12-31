@@ -29,6 +29,6 @@ scipy==1.0.0
 six==1.11.0
 sklearn==0.0
 subprocess32==3.2.7
-tensorflow-gpu==1.2.0
+tensorflow-gpu==1.15.0
 tensorflow-tensorboard==0.1.8
 Werkzeug==0.15.3
