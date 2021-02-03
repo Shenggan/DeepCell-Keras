@@ -1,6 +1,6 @@
 backports.functools-lru-cache==1.4
 backports.weakref==1.0rc1
-bleach==3.1.4
+bleach==3.3.0
 cycler==0.10.0
 decorator==4.1.2
 funcsigs==1.0.2
